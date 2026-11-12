@@ -1,6 +1,7 @@
 package com.example.employee;
 
 import com.example.employee.enums.EmployeeOperationResult;
+import com.example.employee.exceptions.InvalidSalaryException;
 import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 import com.example.employee.repository.EmployeeRepository;
@@ -14,9 +15,16 @@ import java.util.Scanner;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class MainPractice {
-    public static void main(String[] args) {
-//        Test test = new Test();
-//        test.test();
+    public static void main(String[] args) throws InvalidSalaryException {
+        Test test = new Test();
+        test.test();
+//        System.out.println(Double.isFinite(1000.0));       // true
+//        System.out.println(Double.isFinite(0.0));          // true
+//        System.out.println(Double.isFinite(-500.0));       // true
+
+//        System.out.println(Double.isFinite(Double.NaN));   // false
+//        System.out.println(Double.isFinite(Double.POSITIVE_INFINITY)); // false
+//        System.out.println(Double.isFinite(Double.NEGATIVE_INFINITY)); // false
         EmployeeRepository repository = new EmployeeRepository();
         EmployeeService employeeService = new EmployeeService(repository);
         Scanner scanner = new Scanner(System.in);
@@ -86,9 +94,9 @@ public class MainPractice {
                         case INVALID_DEPARTMENT:
                             System.out.println("Department name cannot be empty.");
                             break;
-                        case INVALID_SALARY:
-                            System.out.println("Salary must be greater than 0.");
-                            break;
+//                        case INVALID_SALARY:
+//                            System.out.println("Salary must be greater than 0.");
+//                            break; //it is removed as we handling this with checked exception
                         default:
                             System.out.println("Unable to add Employee.");
                             break;
@@ -188,9 +196,9 @@ public class MainPractice {
                         case INVALID_DEPARTMENT:
                             System.out.println("Department name cannot be empty.");
                             break;
-                        case INVALID_SALARY:
-                            System.out.println("Salary must be greater than 0.");
-                            break;
+//                        case INVALID_SALARY:
+//                            System.out.println("Salary must be greater than 0.");
+//                            break;
                         default:
                             System.out.println("Unable to update Employee.");
                             break;

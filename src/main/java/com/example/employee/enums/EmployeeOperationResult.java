@@ -7,6 +7,5 @@ public enum EmployeeOperationResult {
     DUPLICATE_ID,
     INVALID_NAME,
     INVALID_DEPARTMENT,
-    INVALID_SALARY,
     EMPLOYEE_NOT_FOUND
 }

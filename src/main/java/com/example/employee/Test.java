@@ -10,19 +10,28 @@ import java.util.Scanner;
 
 public class Test {
     public void test(){
-        Scanner scanner = new Scanner(System.in);
-        boolean flag = false;
-        while(!flag){
-            try {
-                System.out.println("Enter Employee ID: ");
-                int id = scanner.nextInt();
-                System.out.println("Employee ID: " + id);
-                flag = true;
-            } catch(InputMismatchException e){
-                System.out.println("Invalid Employee ID. Please enter a valid number.");
-                scanner.next();
-            }
-        }
+        double a = 1000;
+        double b = 0.0 / 0.0;
+        double c = 1.0 / 0.0;
+        double d = -1.0 / 0.0;
+
+        System.out.println(Double.isFinite(a));
+        System.out.println(Double.isFinite(b));
+        System.out.println(Double.isFinite(c));
+        System.out.println(Double.isFinite(d));
+//        Scanner scanner = new Scanner(System.in);
+//        boolean flag = false;
+//        while(!flag){
+//            try {
+//                System.out.println("Enter Employee ID: ");
+//                int id = scanner.nextInt();
+//                System.out.println("Employee ID: " + id);
+//                flag = true;
+//            } catch(InputMismatchException e){
+//                System.out.println("Invalid Employee ID. Please enter a valid number.");
+//                scanner.next();
+//            }
+//        }
     }
     public void testMultipleCatch(){
         Scanner scanner = new Scanner(System.in);

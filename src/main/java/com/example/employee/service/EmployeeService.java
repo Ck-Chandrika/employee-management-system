@@ -1,6 +1,8 @@
 package com.example.employee.service;
 
 import com.example.employee.enums.EmployeeOperationResult;
+import com.example.employee.exceptions.InvalidDepartmentException;
+import com.example.employee.exceptions.InvalidSalaryException;
 import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 import com.example.employee.repository.EmployeeRepository;
@@ -16,47 +18,43 @@ public class EmployeeService {
         // Instead of creating a repository inside the service using new EmployeeRepository(), we pass an existing repository object.
         this.repository = repository;
     }
-    public EmployeeOperationResult addEmployee(Employee employee) {
+    public EmployeeOperationResult addEmployee(Employee employee) throws InvalidSalaryException {
         if(employee == null){
             return EmployeeOperationResult.INVALID_EMPLOYEE;
         }
-        if(employee.getEmployeeId() <= 0){
+        if(!isValidId(employee.getEmployeeId())){
             return EmployeeOperationResult.INVALID_ID;
         }
         if(repository.getEmployeeById(employee.getEmployeeId()) != null){
             return EmployeeOperationResult.DUPLICATE_ID;
         }
-        if(employee.getEmployeeName() == null || employee.getEmployeeName().isBlank()){
+        if(!isValidName(employee.getEmployeeName())){
             return EmployeeOperationResult.INVALID_NAME;
         }
-        if(employee.getDepartment() == null || employee.getDepartment().isBlank()){
+        if(!isValidDepartment(employee.getDepartment())){
             return EmployeeOperationResult.INVALID_DEPARTMENT;
         }
-        if(employee.getSalary() <= 0){
-            return EmployeeOperationResult.INVALID_SALARY;
-        }
+        validateSalary(employee.getSalary());
         return repository.addEmployee(employee);
     }
-    public EmployeeOperationResult updateEmployee(int id, String name, String department, double salary) {
-        if(id <= 0){
+    public EmployeeOperationResult updateEmployee(int id, String name, String department, double salary) throws InvalidSalaryException {
+        if(!isValidId(id)){
             return EmployeeOperationResult.INVALID_ID;
         }
         if(repository.getEmployeeById(id) == null){
             return EmployeeOperationResult.EMPLOYEE_NOT_FOUND;
         }
-        if(name == null || name.isBlank()){
+        if(!isValidName(name)){
             return EmployeeOperationResult.INVALID_NAME;
         }
-        if(department == null || department.isBlank()){
+        if(!isValidDepartment(department)){
             return EmployeeOperationResult.INVALID_DEPARTMENT;
         }
-        if(salary <= 0){
-            return EmployeeOperationResult.INVALID_SALARY;
-        }
+        validateSalary(salary);
         return repository.updateEmployee(id, name, department, salary);
     }
     public EmployeeOperationResult deleteEmployee(int id) {
-        if(id <= 0){
+        if(!isValidId(id)){
             return EmployeeOperationResult.INVALID_ID;
         }
         if(repository.getEmployeeById(id) == null){
@@ -71,6 +69,9 @@ public class EmployeeService {
         return repository.getEmployees();
     }
     public List<Employee> getEmployeesByDepartment(String department) {
+        if(!isValidDepartment(department)){
+            throw new InvalidDepartmentException("Department cannot be empty.");
+        }
         return repository.getEmployeesByDepartment(department);
     }
     public Employee getHighestSalaryEmployee() {
@@ -81,5 +82,21 @@ public class EmployeeService {
     }
     public Employee getEmployeeById(int id) {
         return repository.getEmployeeById(id);
+    }
+    private boolean isValidDepartment(String department){
+        return department != null && !department.isBlank();
+    }
+    private boolean isValidName(String name){
+        return name != null && !name.isBlank();
+    }
+    private boolean isValidId(int id){
+        return id > 0;
+    }
+    private void validateSalary(double salary) throws InvalidSalaryException {
+        // we made it private bcz Only EmployeeService needs this method. Main should not call it directly.
+        // This is an example of encapsulation.
+        if(!Double.isFinite(salary) || salary <= 0){ // Double.isFinite() rejects NaN, positive infinity and negative infinity.
+            throw new InvalidSalaryException("Salary must be a finite number greater than 0.");
+        }
     }
 }

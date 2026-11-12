@@ -1,6 +1,8 @@
 package com.example.employee;
 
 import com.example.employee.enums.EmployeeOperationResult;
+import com.example.employee.exceptions.InvalidDepartmentException;
+import com.example.employee.exceptions.InvalidSalaryException;
 import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 import com.example.employee.repository.EmployeeRepository;
@@ -32,36 +34,42 @@ public class Main {
             choice = readInt(scanner, "Enter your choice: ");
             switch(choice){
                 case 1:
-                    int id = readInt(scanner, "Emter Employee ID : ");
+                    int id = readInt(scanner, "Enter Employee ID : ");
                     System.out.println("Enter Employee Name : ");
                     String name = scanner.nextLine().trim();
                     System.out.println("Enter Department Name : ");
                     String department = scanner.nextLine().trim();
                     double salary = readDouble(scanner, "Enter Employee Salary : ");
                     Employee employee = new Employee(id, name, department, salary);
-                    EmployeeOperationResult result = employeeService.addEmployee(employee);
-                    switch(result){
-                        case SUCCESS:
-                            System.out.println("Employee added successfully");
-                            break;
-                        case DUPLICATE_ID:
-                            System.out.println("Employee ID already exists");
-                            break;
-                        case INVALID_ID:
-                            System.out.println("Employee ID must be greater than 0.");
-                            break;
-                        case INVALID_NAME:
-                            System.out.println("Employee name cannot be empty.");
-                            break;
-                        case INVALID_DEPARTMENT:
-                            System.out.println("Department name cannot be empty.");
-                            break;
-                        case INVALID_SALARY:
-                            System.out.println("Salary must be greater than 0.");
-                            break;
-                        default:
-                            System.out.println("Unable to add Employee.");
-                            break;
+                    try { // we should handle this try catch here as addEmployee using a function which is using checked invalidsalayEsception
+                        // Because InvalidSalaryException is a checked exception,
+                        // we must catch it or declare it using throws.
+                        // If it propagates out of main() without being handled,
+                        // the application will terminate with an exception.
+                        EmployeeOperationResult result = employeeService.addEmployee(employee);
+                        switch (result) {
+                            case SUCCESS:
+                                System.out.println("Employee added successfully");
+                                break;
+                            case DUPLICATE_ID:
+                                System.out.println("Employee ID already exists");
+                                break;
+                            case INVALID_ID:
+                                System.out.println("Employee ID must be greater than 0.");
+                                break;
+                            case INVALID_NAME:
+                                System.out.println("Employee name cannot be empty.");
+                                break;
+                            case INVALID_DEPARTMENT:
+                                System.out.println("Department name cannot be empty.");
+                                break;
+//                          INVALID Salary case no longer needed in the switch because salary validation now throws an exception.
+                            default:
+                                System.out.println("Unable to add Employee.");
+                                break;
+                        }
+                    } catch(InvalidSalaryException e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 2:
@@ -101,29 +109,30 @@ public class Main {
                     System.out.println("Enter Department Name : ");
                     String newDepartment = scanner.nextLine().trim();
                     double newSalary = readDouble(scanner, "Enter Employee Salary : ");
-                    EmployeeOperationResult updateResult = employeeService.updateEmployee(updateId, newName,  newDepartment, newSalary);
-                    switch(updateResult){
-                        case SUCCESS:
-                            System.out.println("Employee updated successfully");
-                            break;
-                        case INVALID_ID:
-                            System.out.println("Invalid Employee ID");
-                            break;
-                        case EMPLOYEE_NOT_FOUND:
-                            System.out.println("Employee not found with this ID");
-                            break;
-                        case INVALID_NAME:
-                            System.out.println("Employee name cannot be empty.");
-                            break;
-                        case INVALID_DEPARTMENT:
-                            System.out.println("Department name cannot be empty.");
-                            break;
-                        case INVALID_SALARY:
-                            System.out.println("Salary must be greater than 0.");
-                            break;
-                        default:
-                            System.out.println("Unable to update Employee.");
-                            break;
+                    try {
+                        EmployeeOperationResult updateResult = employeeService.updateEmployee(updateId, newName, newDepartment, newSalary);
+                        switch (updateResult) {
+                            case SUCCESS:
+                                System.out.println("Employee updated successfully");
+                                break;
+                            case INVALID_ID:
+                                System.out.println("Invalid Employee ID");
+                                break;
+                            case EMPLOYEE_NOT_FOUND:
+                                System.out.println("Employee not found with this ID");
+                                break;
+                            case INVALID_NAME:
+                                System.out.println("Employee name cannot be empty.");
+                                break;
+                            case INVALID_DEPARTMENT:
+                                System.out.println("Department name cannot be empty.");
+                                break;
+                            default:
+                                System.out.println("Unable to update Employee.");
+                                break;
+                        }
+                    } catch (InvalidSalaryException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 5:
@@ -147,17 +156,17 @@ public class Main {
                 case 6:
                     System.out.println("Enter Department Name to Search : ");
                     String departmentName = scanner.nextLine().trim();
-                    if(departmentName.isBlank()){
-                        System.out.println("Department name can not be empty.");
-                        break;
-                    }
-                    List<Employee> departmentWiseEmployees = employeeService.getEmployeesByDepartment(departmentName);
-                    if(departmentWiseEmployees.isEmpty()){
-                        System.out.println("No Employees found with this department: " + departmentName);
-                    } else{
-                        for(Employee e : departmentWiseEmployees){
-                            System.out.println(e);
+                    try {
+                        List<Employee> departmentWiseEmployees = employeeService.getEmployeesByDepartment(departmentName);
+                        if (departmentWiseEmployees.isEmpty()) {
+                            System.out.println("No Employees found with this department: " + departmentName);
+                        } else {
+                            for (Employee e : departmentWiseEmployees) {
+                                System.out.println(e);
+                            }
                         }
+                    } catch(InvalidDepartmentException e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 7:

@@ -4,7 +4,10 @@ import com.example.employee.enums.EmployeeOperationResult;
 import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Comparator;
+import java.util.Iterator;
 
 public class EmployeeRepository {
     // List<Employee> - a collection that stores Employee objects
@@ -38,13 +41,6 @@ public class EmployeeRepository {
         return EmployeeOperationResult.SUCCESS;
     }
     public EmployeeOperationResult deleteEmployee(int id){
-//        for(Employee e: employees){
-//            if(e.getEmployeeId().equals(id)) {
-//                employees.remove(e);
-//                return true;
-//            }
-//        }
-//        return false;
         Iterator<Employee> iterator = employees.iterator();
         while(iterator.hasNext()){
             Employee e = iterator.next();
