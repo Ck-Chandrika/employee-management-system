@@ -7,6 +7,7 @@ import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 import com.example.employee.repository.EmployeeRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class EmployeeService {
@@ -37,7 +38,7 @@ public class EmployeeService {
         validateSalary(employee.getSalary());
         return repository.addEmployee(employee);
     }
-    public EmployeeOperationResult updateEmployee(int id, String name, String department, double salary) throws InvalidSalaryException {
+    public EmployeeOperationResult updateEmployee(int id, String name, String department, BigDecimal salary) throws InvalidSalaryException {
         if(!isValidId(id)){
             return EmployeeOperationResult.INVALID_ID;
         }
@@ -92,10 +93,11 @@ public class EmployeeService {
     private boolean isValidId(int id){
         return id > 0;
     }
-    private void validateSalary(double salary) throws InvalidSalaryException {
+    private void validateSalary(BigDecimal salary) throws InvalidSalaryException {
         // we made it private bcz Only EmployeeService needs this method. Main should not call it directly.
         // This is an example of encapsulation.
-        if(!Double.isFinite(salary) || salary <= 0){ // Double.isFinite() rejects NaN, positive infinity and negative infinity.
+//        if(!Double.isFinite(salary) || salary <= 0){ // Double.isFinite() rejects NaN, positive infinity and negative infinity.
+        if(salary == null || salary.signum() <= 0 ){
             throw new InvalidSalaryException("Salary must be a finite number greater than 0.");
         }
     }

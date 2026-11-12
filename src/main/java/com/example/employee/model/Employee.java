@@ -1,12 +1,14 @@
 package com.example.employee.model;
 
+import java.math.BigDecimal;
+
 public class Employee {
     private final int employeeId; // don't need to change the employeeId so used final
     private String employeeName; // add private as other class can't access these values directly
     private String department;
-    private double salary;
+    private BigDecimal salary;
 
-    public Employee(int employeeId, String employeeName,  String department, double salary) {
+    public Employee(int employeeId, String employeeName,  String department, BigDecimal  salary) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.department = department;
@@ -27,10 +29,10 @@ public class Employee {
     public void setDepartment(String department) {
         this.department = department;
     }
-    public double getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
-    public void setSalary(double salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
     @Override //add annotation as we overriding toString from parent class Object

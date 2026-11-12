@@ -7,6 +7,8 @@ import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 import com.example.employee.repository.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
+
+import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -39,7 +41,7 @@ public class Main {
                     String name = scanner.nextLine().trim();
                     System.out.println("Enter Department Name : ");
                     String department = scanner.nextLine().trim();
-                    double salary = readDouble(scanner, "Enter Employee Salary : ");
+                    BigDecimal salary = readBigDecimal(scanner, "Enter Employee Salary : ");
                     Employee employee = new Employee(id, name, department, salary);
                     try { // we should handle this try catch here as addEmployee using a function which is using checked invalidsalayEsception
                         // Because InvalidSalaryException is a checked exception,
@@ -108,7 +110,7 @@ public class Main {
                     String newName = scanner.nextLine().trim();
                     System.out.println("Enter Department Name : ");
                     String newDepartment = scanner.nextLine().trim();
-                    double newSalary = readDouble(scanner, "Enter Employee Salary : ");
+                    BigDecimal newSalary = readBigDecimal(scanner, "Enter Employee Salary : ");
                     try {
                         EmployeeOperationResult updateResult = employeeService.updateEmployee(updateId, newName, newDepartment, newSalary);
                         switch (updateResult) {
@@ -226,6 +228,16 @@ public class Main {
             } catch(InputMismatchException e){
                 System.out.println("Please enter a valid numeric value.");
                 scanner.nextLine();
+            }
+        }
+    }
+    public static BigDecimal readBigDecimal(Scanner scanner, String message) {
+        while(true) {
+            System.out.print(message);
+            try{
+                return new BigDecimal(scanner.nextLine().trim());
+            } catch(InputMismatchException e){
+                System.out.println("Please enter a valid numeric value.");
             }
         }
     }

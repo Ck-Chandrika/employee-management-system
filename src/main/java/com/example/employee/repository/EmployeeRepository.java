@@ -4,6 +4,7 @@ import com.example.employee.enums.EmployeeOperationResult;
 import com.example.employee.model.Employee;
 import com.example.employee.model.EmployeeSearchResult;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
@@ -30,7 +31,7 @@ public class EmployeeRepository {
         }
         return null;
     }
-    public EmployeeOperationResult updateEmployee(int id, String name, String department, double salary){
+    public EmployeeOperationResult updateEmployee(int id, String name, String department, BigDecimal salary){
         Employee employee = getEmployeeById(id);
         if (employee == null) {
             return EmployeeOperationResult.EMPLOYEE_NOT_FOUND;
@@ -71,7 +72,8 @@ public class EmployeeRepository {
         }
         Employee highestSalaryEmployee = employees.get(0);
         for(Employee e: employees){
-            if(e.getSalary() > highestSalaryEmployee.getSalary()){
+//            if(e.getSalary() > highestSalaryEmployee.getSalary()){
+            if(e.getSalary().compareTo(highestSalaryEmployee.getSalary()) > 0){
                 highestSalaryEmployee = e;
             }
         }
@@ -82,7 +84,7 @@ public class EmployeeRepository {
         if(count <= 0){
             return new ArrayList<>();
         }
-        Comparator<Employee> comparator = (e1, e2) -> Double.compare(e2.getSalary(), e1.getSalary());
+        Comparator<Employee> comparator = (e1, e2) -> e2.getSalary().compareTo(e1.getSalary());
         // we need to get the employees in descending, highest to lowest depending on their salaries
         List<Employee> sortedEmployees = new ArrayList<>(employees);
         sortedEmployees.sort(comparator);

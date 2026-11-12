@@ -11,6 +11,8 @@ import com.example.employee.repository.EmployeeRepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EmployeeServiceTest {
@@ -24,7 +26,7 @@ public class EmployeeServiceTest {
     }
 
     private Employee createEmployee() {
-        return new Employee(101, "Chandrika", "Software", 25000000);
+        return new Employee(101, "Chandrika", "Software", new BigDecimal("25000000"));
     }
 
     @Test
@@ -37,14 +39,14 @@ public class EmployeeServiceTest {
     @Test
     void shouldRejectDuplicateEmployeeId() throws InvalidSalaryException {
         service.addEmployee(createEmployee());
-        Employee duplicateEmployee = new Employee(101, "Ravi Teja", "Software", 25000000);
+        Employee duplicateEmployee = new Employee(101, "Ravi Teja", "Software", new BigDecimal("25000000"));
         EmployeeOperationResult result = service.addEmployee(duplicateEmployee);
         assertEquals(EmployeeOperationResult.DUPLICATE_ID, result);
     }
 
     @Test
     void shouldRejectInvalidSalary() {
-        Employee employee = new Employee(101, "Chandrika", "Software", -25000000);
+        Employee employee = new Employee(101, "Chandrika", "Software", new BigDecimal("-25000000"));
         assertThrows(InvalidSalaryException.class, () -> service.addEmployee(employee));
         assertTrue(repository.getEmployees().isEmpty());
     }
@@ -52,34 +54,34 @@ public class EmployeeServiceTest {
     @Test
     void shouldUpdateEmployeeSuccessfully() throws InvalidSalaryException {
         service.addEmployee(createEmployee());
-        EmployeeOperationResult result = service.updateEmployee(101, "Chandrika 1", "Software 1", 25000000);
+        EmployeeOperationResult result = service.updateEmployee(101, "Chandrika 1", "Software 1", new BigDecimal("25000000"));
         assertEquals(EmployeeOperationResult.SUCCESS, result);
         Employee updated = repository.getEmployeeById(101);
         assertEquals("Chandrika 1", updated.getEmployeeName());
         assertEquals("Software 1", updated.getDepartment());
-        assertEquals(25000000, updated.getSalary());
+        assertEquals(new BigDecimal("25000000"), updated.getSalary());
     }
 
     @Test
     void shouldNotUpdateEmployeeWhenSalaryIsInvalid() throws  InvalidSalaryException {
         service.addEmployee(createEmployee());
-        assertThrows(InvalidSalaryException.class, () -> service.updateEmployee(101, "Chandrika 2", "IT", -123123));
+        assertThrows(InvalidSalaryException.class, () -> service.updateEmployee(101, "Chandrika 2", "IT", new BigDecimal("-123123")));
         Employee employee = repository.getEmployeeById(101);
         assertEquals("Chandrika", employee.getEmployeeName());
         assertEquals("Software", employee.getDepartment());
-        assertEquals(25000000, employee.getSalary());
+        assertEquals(new BigDecimal("25000000"), employee.getSalary());
     }
 
     @Test
     void shouldReturnEmployeeNotFoundWhenUpdatingUnknownId() throws InvalidSalaryException {
-        EmployeeOperationResult result = service.updateEmployee(102, "Chandrika", "Software", 25000000);
+        EmployeeOperationResult result = service.updateEmployee(102, "Chandrika", "Software", new BigDecimal("25000000"));
         assertEquals(EmployeeOperationResult.EMPLOYEE_NOT_FOUND, result);
     }
 
     @Test
     void shouldRejectInvalidDepartmentDuringUpdate() throws InvalidSalaryException {
         service.addEmployee(createEmployee());
-        EmployeeOperationResult result = service.updateEmployee(101, "Chandrika", " ", 26000000);
+        EmployeeOperationResult result = service.updateEmployee(101, "Chandrika", " ", new BigDecimal("26000000"));
         assertEquals(EmployeeOperationResult.INVALID_DEPARTMENT, result);
     }
 
@@ -99,21 +101,21 @@ public class EmployeeServiceTest {
 
     @Test
     void shouldRejectInvalidEmployeeId() throws InvalidSalaryException {
-        Employee employee = new Employee(0, "Chandrika", "Software", 25000000);
+        Employee employee = new Employee(0, "Chandrika", "Software", new BigDecimal("25000000"));
         EmployeeOperationResult result = service.addEmployee(employee);
         assertEquals(EmployeeOperationResult.INVALID_ID, result);
     }
 
     @Test
     void shouldRejectInvalidEmployeeName() throws InvalidSalaryException {
-        Employee employee = new Employee(101, " ", "Software", 25000000);
+        Employee employee = new Employee(101, " ", "Software", new BigDecimal("25000000"));
         EmployeeOperationResult result = service.addEmployee(employee);
         assertEquals(EmployeeOperationResult.INVALID_NAME, result);
     }
 
     @Test
     void shouldRejectInvalidDepartment() throws InvalidSalaryException {
-        Employee employee = new Employee(101, "Chandrika", " ", 25000000);
+        Employee employee = new Employee(101, "Chandrika", " ", new BigDecimal("25000000"));
         EmployeeOperationResult result = service.addEmployee(employee);
         assertEquals(EmployeeOperationResult.INVALID_DEPARTMENT, result);
     }
@@ -154,7 +156,7 @@ public class EmployeeServiceTest {
     // Now we'll check whether the application behaves correctly with unusual but valid or invalid values.
     @Test
     void shouldRejectZeroSalary() {
-        Employee employee = new Employee(101, "Chandrika", "Software", 0);
+        Employee employee = new Employee(101, "Chandrika", "Software", new BigDecimal("0"));
         assertThrows(InvalidSalaryException.class, () -> service.addEmployee(employee));
     }
 
@@ -173,12 +175,12 @@ public class EmployeeServiceTest {
     @Test
     void shouldNotModifyOtherEmployeesDuringUpdate() throws InvalidSalaryException {
         service.addEmployee(createEmployee());
-        Employee secondEmployee = new Employee(102, "Chandrika 1", "Software 1", 26000000);
+        Employee secondEmployee = new Employee(102, "Chandrika 1", "Software 1", new BigDecimal("26000000"));
         service.addEmployee(secondEmployee);
-        service.updateEmployee(101, "Chandrika Kammadanam", "Software Engineering", 27000000);
+        service.updateEmployee(101, "Chandrika Kammadanam", "Software Engineering", new BigDecimal("27000000"));
         Employee unchanged = repository.getEmployeeById(102);
         assertEquals("Chandrika 1", unchanged.getEmployeeName());
         assertEquals("Software 1", unchanged.getDepartment());
-        assertEquals(26000000, unchanged.getSalary());
+        assertEquals(new BigDecimal("26000000"), unchanged.getSalary());
     }
 }
